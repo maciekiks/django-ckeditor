@@ -47,7 +47,8 @@ class ImageUploadView(generic.View):
         uploaded_file = request.FILES['upload']
 
         backend = image_processing.get_backend()
-        ck_func_num = escape(request.GET['CKEditorFuncNum'])
+
+        ck_func_num = escape(request.GET.get('CKEditorFuncNum', ''))
 
         # Throws an error when an non-image file are uploaded.
         if not getattr(settings, 'CKEDITOR_ALLOW_NONIMAGE_FILES', True):
