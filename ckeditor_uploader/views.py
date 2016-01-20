@@ -60,21 +60,24 @@ class ImageUploadView(generic.View):
                     window.parent.CKEDITOR.tools.callFunction({0}, '', 'Invalid file type.');
                     </script>""".format(ck_func_num))
 
-        saved_path = self._save_file(request, uploaded_file)
+        saved_path, filename = self._save_file(request, uploaded_file)
         self._create_thumbnail_if_needed(backend, saved_path)
         url = utils.get_media_url(saved_path)
 
         # Respond with Javascript sending ckeditor upload url.
-        return HttpResponse("""
-        <script type='text/javascript'>
-            window.parent.CKEDITOR.tools.callFunction({0}, '{1}');
-        </script>""".format(ck_func_num, url))
+        if ck_func_num:
+            return HttpResponse("""
+            <script type='text/javascript'>
+                window.parent.CKEDITOR.tools.callFunction({0}, '{1}');
+            </script>""".format(ck_func_num, url))
+        else:
+            return "{'uploaded': true, 'url': '" + url + "', 'fileName': '" + filename + "'}"
 
     @staticmethod
     def _save_file(request, uploaded_file):
         filename = get_upload_filename(uploaded_file.name, request.user)
         saved_path = default_storage.save(filename, uploaded_file)
-        return saved_path
+        return saved_path, filename
 
     @staticmethod
     def _create_thumbnail_if_needed(backend, saved_path):
