@@ -71,7 +71,7 @@ class ImageUploadView(generic.View):
                 window.parent.CKEDITOR.tools.callFunction({0}, '{1}');
             </script>""".format(ck_func_num, url))
         else:
-            return HttpResponse("{uploaded: true, url: '" + url + "', fileName: '" + filename + "'}")
+            return HttpResponse('{"uploaded": true, "url": "' + url + '", "fileName": "' + filename.split('/')[-1] + '"}')
 
     @staticmethod
     def _save_file(request, uploaded_file):
